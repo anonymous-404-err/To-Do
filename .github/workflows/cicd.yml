@@ -32,7 +32,8 @@ jobs:
       run: npm install
 
     - name: Run Tests
-      run: npm test
+      run: - name: Run Tests
+      run: npx mocha tests/**/*.js --exit
 
   deploy-frontend:
     needs: test
