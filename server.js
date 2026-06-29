@@ -8,7 +8,7 @@ app.use(express.json());
 // Enable CORS so GitHub Pages can safely request data from Render
 app.use(cors({
     origin: [
-        "https://YOUR_GITHUB_USERNAME.github.io", 
+        "https://anonymous-404-err.github.io", 
         "http://localhost:3000" // Kept for local development testing
     ]
 }));
