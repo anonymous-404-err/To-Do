@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI/CD Verified Todo App</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding-top: 50px; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 350px; }
+        h1 { margin-top: 0; color: #333; text-align: center; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { background: #f9f9f9; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #007bff; }
+        .delete-btn { background: #dc3545; padding: 5px 10px; font-size: 12px; border-radius: 4px; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="Add a new task...">
+            <button onclick="addTodo()">Add</button>
+        </div>
+        <ul id="todo-list"></ul>
+    </div>
 
+    <script>
+        // REPLACE THIS with your deployed Render app URL (e.g., https://todo-api-xyz.onrender.com)
+        const API_BASE_URL = "https://to-do-x1rk.onrender.com/"; 
+
+        async function fetchTodos() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/todos`);
+                const todos = await res.json();
+                const list = document.getElementById('todo-list');
+                list.innerHTML = '';
+                todos.forEach(todo => {
+                    list.innerHTML += `<li>${todo.text} <button class="delete-btn" onclick="deleteTodo(${todo.id})">X</button></li>`;
+                });
+            } catch (err) {
+                console.error("Error fetching todos:", err);
+            }
+        }
+
+        async function addTodo() {
+            const input = document.getElementById('todo-input');
+            if (!input.value.trim()) return;
+            try {
+                await fetch(`${API_BASE_URL}/api/todos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: input.value })
+                });
+                input.value = '';
+                fetchTodos();
+            } catch (err) {
+                console.error("Error adding todo:", err);
+            }
+        }
+
+        async function deleteTodo(id) {
+            try {
+                await fetch(`${API_BASE_URL}/api/todos/${id}`, { method: 'DELETE' });
+                fetchTodos();
+            } catch (err) {
+                console.error("Error deleting todo:", err);
+            }
+        }
+
+        // Initial Load
+        fetchTodos();
+    </script>
+</body>
+</html>
